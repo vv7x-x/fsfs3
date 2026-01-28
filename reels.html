@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>فسفس | الريلز</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    
+</head>
+
+<body>
+    <div class="bg-animation">
+        <div class="gradient-orb orb-1"></div>
+        <div class="gradient-orb orb-2"></div>
+        <div class="gradient-orb orb-3"></div>
+    </div>
+
+    <nav class="navbar glass">
+        <div class="nav-container">
+            <a href="index.html" class="logo" style="text-decoration: none;">
+                <img src="fsfs.png" alt="fsfs">
+                <span class="logo-text">فسفس</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html" class="nav-link">الرئيسية</a></li>
+                <li><a href="chat.html" class="nav-link">الدردشة</a></li>
+                <li><a href="forum.html" class="nav-link">المنتدى</a></li>
+                <li><a href="reels.html" class="nav-link active">الريلز</a></li>
+                <li><a href="graffiti.html" class="nav-link">السبورة</a></li>
+            </ul>
+            <div class="nav-actions">
+                <a href="login.html" class="btn btn-ghost" style="text-decoration:none">تسجيل دخول</a>
+                <a href="register.html" class="btn btn-primary" style="text-decoration:none">انضم إلينا</a>
+            </div>
+            <button class="mobile-menu-btn" id="mobileMenuBtn"><span></span><span></span><span></span></button>
+        </div>
+    </nav>
+    <div class="mobile-menu" id="mobileMenu">
+        <ul class="mobile-nav-links">
+            <li><a href="index.html">الرئيسية</a></li>
+            <li><a href="chat.html">الدردشة</a></li>
+            <li><a href="forum.html">المنتدى</a></li>
+            <li><a href="reels.html">الريلز</a></li>
+            <li><a href="graffiti.html">السبورة</a></li>
+        </ul>
+    </div>
+
+    <main class="main-content">
+        <section class="section">
+            <div class="reels-container">
+                <div class="reels-header">
+                    <h2 class="section-title gradient-text">ريلز الشلة</h2>
+                    <button class="btn btn-primary" id="shareReelBtn">
+                        <span>شارك ريلز</span>
+                        <span class="btn-icon">📱</span>
+                    </button>
+                </div>
+
+                <div class="reels-grid" id="reelsGrid">
+                    <!-- Reels loaded by JS -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Share Reel Modal -->
+    <div class="modal" id="shareReelModal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content glass">
+            <div class="modal-header">
+                <h3>شارك ريلز انستجرام</h3>
+                <button class="modal-close" id="closeReelModal">&times;</button>
+            </div>
+            <form id="shareReelForm">
+                <div class="form-group">
+                    <label for="reelUrl">رابط الريلز</label>
+                    <input type="url" id="reelUrl" placeholder="https://www.instagram.com/reel/..." required>
+                </div>
+                <div class="form-group">
+                    <label for="reelCaption">تعليقك على الريلز</label>
+                    <textarea id="reelCaption" rows="3" placeholder="إيش رايك في الريلز؟"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">مشاركة الريلز</button>
+            </form>
+        </div>
+    </div>
+
+
+
+    
+    
+    
+
+<div class="toast" id="toast"><span class="toast-message"></span></div>
+<script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+
+</html>
+
+

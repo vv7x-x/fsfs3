@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>فسفس | تفاصيل الموضوع</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    
+    <style>
+        .post-details-header-top {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .post-details-header-top h2 {
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-animation">
+        <div class="gradient-orb orb-1"></div>
+        <div class="gradient-orb orb-2"></div>
+        <div class="gradient-orb orb-3"></div>
+    </div>
+
+    <nav class="navbar glass">
+        <div class="nav-container">
+            <a href="index.html" class="logo" style="text-decoration: none;">
+                <img src="fsfs.png" alt="fsfs">
+                <span class="logo-text">فسفس</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html" class="nav-link">الرئيسية</a></li>
+                <li><a href="chat.html" class="nav-link">الدردشة</a></li>
+                <li><a href="forum.html" class="nav-link active">المنتدى</a></li>
+                <li><a href="reels.html" class="nav-link">الريلز</a></li>
+                <li><a href="graffiti.html" class="nav-link">السبورة</a></li>
+            </ul>
+            <div class="nav-actions">
+                <a href="login.html" class="btn btn-ghost" style="text-decoration:none">تسجيل دخول</a>
+                <a href="register.html" class="btn btn-primary" style="text-decoration:none">انضم إلينا</a>
+            </div>
+            <button class="mobile-menu-btn" id="mobileMenuBtn"><span></span><span></span><span></span></button>
+        </div>
+    </nav>
+    <div class="mobile-menu" id="mobileMenu">
+        <ul class="mobile-nav-links">
+            <li><a href="index.html">الرئيسية</a></li>
+            <li><a href="chat.html">الدردشة</a></li>
+            <li><a href="forum.html">المنتدى</a></li>
+            <li><a href="reels.html">الريلز</a></li>
+            <li><a href="graffiti.html">السبورة</a></li>
+        </ul>
+    </div>
+
+    <main class="main-content">
+        <section class="section section-post-details">
+            <div class="post-details-container glass">
+                <div class="post-details-header-top">
+                    <a href="forum.html" class="icon-btn back-btn"
+                        style="text-decoration:none; display:flex; align-items:center; justify-content:center;">➜</a>
+                    <h2>تفاصيل الموضوع</h2>
+                </div>
+                <div id="singlePostContent">
+                    <p class="text-center">جاري التحميل...</p>
+                </div>
+                <div class="comments-section">
+                    <h3>التعليقات</h3>
+                    <div id="postCommentsList" class="comments-list"></div>
+                    <form id="addCommentForm" class="comment-form">
+                        <div class="form-group">
+                            <textarea id="commentContent" placeholder="اكتب تعليقك هنا..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">إضافة تعليق</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+
+
+    
+    
+    
+
+<div class="toast" id="toast"><span class="toast-message"></span></div>
+<script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+
+</html>
+
+

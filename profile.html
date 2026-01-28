@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>فسفس | الملف الشخصي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    
+</head>
+
+<body>
+    <div class="bg-animation">
+        <div class="gradient-orb orb-1"></div>
+        <div class="gradient-orb orb-2"></div>
+        <div class="gradient-orb orb-3"></div>
+    </div>
+
+    <nav class="navbar glass">
+        <div class="nav-container">
+            <a href="index.html" class="logo" style="text-decoration: none;">
+                <img src="fsfs.png" alt="fsfs">
+                <span class="logo-text">فسفس</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html" class="nav-link">الرئيسية</a></li>
+                <li><a href="chat.html" class="nav-link">الدردشة</a></li>
+                <li><a href="forum.html" class="nav-link">المنتدى</a></li>
+                <li><a href="reels.html" class="nav-link">الريلز</a></li>
+                <li><a href="graffiti.html" class="nav-link">السبورة</a></li>
+            </ul>
+            <div class="nav-actions">
+                <a href="login.html" class="btn btn-ghost" style="text-decoration:none">تسجيل دخول</a>
+                <a href="register.html" class="btn btn-primary" style="text-decoration:none">انضم إلينا</a>
+            </div>
+            <button class="mobile-menu-btn" id="mobileMenuBtn"><span></span><span></span><span></span></button>
+        </div>
+    </nav>
+    <div class="mobile-menu" id="mobileMenu">
+        <ul class="mobile-nav-links">
+            <li><a href="index.html">الرئيسية</a></li>
+            <li><a href="chat.html">الدردشة</a></li>
+            <li><a href="forum.html">المنتدى</a></li>
+            <li><a href="reels.html">الريلز</a></li>
+            <li><a href="graffiti.html">السبورة</a></li>
+        </ul>
+    </div>
+
+    <main class="main-content">
+        <section class="section">
+            <div class="profile-container">
+                <div class="profile-header glass">
+                    <div class="profile-cover"></div>
+                    <div class="profile-info">
+                        <div class="profile-avatar-lg" id="profileAvatar"></div>
+                        <h2 class="profile-name" id="profileName">اسم المستخدم</h2>
+                        <p class="profile-joined" id="profileJoined">انضم منذ...</p>
+                    </div>
+                    <div class="profile-stats">
+                        <div class="stat-item">
+                            <span class="stat-value" id="profilePostsCount">0</span>
+                            <span class="stat-label">موضوع</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value" id="profileReelsCount">0</span>
+                            <span class="stat-label">ريلز</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-tabs">
+                    <button class="tab-btn active" data-tab="my-posts">مواضيعي</button>
+                    <button class="tab-btn" data-tab="my-reels">الريلز الخاص بي</button>
+                    <button class="tab-btn" data-tab="settings">الإعدادات</button>
+                </div>
+
+                <div class="profile-content">
+                    <div id="my-posts" class="tab-content active">
+                        <div class="forum-posts" id="myPostsList"></div>
+                    </div>
+                    <div id="my-reels" class="tab-content">
+                        <div class="reels-grid" id="myReelsList"></div>
+                    </div>
+                    <div id="settings" class="tab-content">
+                        <div class="glass settings-card">
+                            <h3>تعديل الملف الشخصي</h3>
+                            <form id="profileSettingsForm">
+                                <div class="form-group">
+                                    <label>اسم المستخدم</label>
+                                    <input type="text" id="settingsUsername" disabled>
+                                    <small class="text-muted">لا يمكن تغيير اسم المستخدم حالياً</small>
+                                </div>
+                                <div class="form-group">
+                                    <label>للون الأفاتار</label>
+                                    <div class="color-picker" id="avatarColorPicker"></div>
+                                </div>
+                                <div class="form-group">
+                                    <label>أو ارفع صورة شخصية</label>
+                                    <input type="file" id="avatarUpload" accept="image/*">
+                                    <small class="text-muted">اختر صورة من جهازك (يفضل مربعة)</small>
+                                </div>
+                                <button type="submit" class="btn btn-primary">حفظ التغييرات</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+
+
+    
+    
+    
+
+<div class="toast" id="toast"><span class="toast-message"></span></div>
+<script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+
+</html>
+
+

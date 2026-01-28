@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>فسفس | الدردشة</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    
+</head>
+
+<body>
+    <div class="bg-animation">
+        <div class="gradient-orb orb-1"></div>
+        <div class="gradient-orb orb-2"></div>
+        <div class="gradient-orb orb-3"></div>
+    </div>
+
+    <nav class="navbar glass">
+        <div class="nav-container">
+            <a href="index.html" class="logo" style="text-decoration: none;">
+                <img src="fsfs.png" alt="fsfs">
+                <span class="logo-text">فسفس</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html" class="nav-link">الرئيسية</a></li>
+                <li><a href="chat.html" class="nav-link active">الدردشة</a></li>
+                <li><a href="forum.html" class="nav-link">المنتدى</a></li>
+                <li><a href="reels.html" class="nav-link">الريلز</a></li>
+                <li><a href="graffiti.html" class="nav-link">السبورة</a></li>
+            </ul>
+            <div class="nav-actions">
+                <a href="login.html" class="btn btn-ghost" style="text-decoration:none">تسجيل دخول</a>
+                <a href="register.html" class="btn btn-primary" style="text-decoration:none">انضم إلينا</a>
+            </div>
+            <button class="mobile-menu-btn" id="mobileMenuBtn"><span></span><span></span><span></span></button>
+        </div>
+    </nav>
+
+    <div class="mobile-menu" id="mobileMenu">
+        <ul class="mobile-nav-links">
+            <li><a href="index.html">الرئيسية</a></li>
+            <li><a href="chat.html">الدردشة</a></li>
+            <li><a href="forum.html">المنتدى</a></li>
+            <li><a href="reels.html">الريلز</a></li>
+            <li><a href="graffiti.html">السبورة</a></li>
+        </ul>
+    </div>
+
+    <main class="main-content">
+        <section class="section">
+            <div class="chat-container">
+                <div class="chat-sidebar glass">
+                    <div class="sidebar-header">
+                        <h3>الشلة أونلاين</h3>
+                        <span class="online-count">0 متصل <span class="online-dot-pulse"
+                                style="display:none"></span></span>
+                    </div>
+                    <div class="users-list">
+                        <!-- Users loaded by JS -->
+                    </div>
+                </div>
+                <div class="chat-main glass">
+                    <div class="chat-header">
+                        <h3>💬 غرفة الشلة</h3>
+                    </div>
+                    <div class="chat-messages" id="chatMessages">
+                        <!-- Messages loaded by JS -->
+                    </div>
+                    <div id="typingIndicator" class="typing-indicator" style="display: none;">
+                        <span class="typing-text">أحدهم يكتب الآن</span>
+                        <div class="typing-dots"><span></span><span></span><span></span></div>
+                    </div>
+                    <div class="chat-input-container">
+                        <div class="chat-input glass">
+                            <button class="emoji-btn" id="emojiBtn">😊</button>
+                            <button class="emoji-btn" id="imageBtn" title="ارسال صورة">📷</button>
+                            <input type="file" id="chatImageInput" accept="image/*" style="display: none;">
+                            <button class="emoji-btn" id="micBtn" title="تسجيل صوتي">🎙️</button>
+                            <button class="emoji-btn buzz-btn" id="buzzBtn" title="اصحى للكلام!"
+                                style="color:#ffd700">⚡</button>
+                            <button class="emoji-btn" id="pollBtn" title="عمل تصويت">📊</button>
+                            <input type="text" id="messageInput" placeholder="اكتب رسالتك هنا..." autocomplete="off">
+                            <button class="send-btn" id="sendBtn">
+                                <span>إرسال</span>
+                                <span class="send-icon">➤</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+
+
+    <!-- Radio Widget -->
+    <div id="radioToggle" class="radio-toggle" title="راديو الشلة">🎵</div>
+    <div id="radioWidget" class="radio-widget">
+        <div class="radio-header">
+            <span>📻 راديو الشلة</span>
+            <div class="radio-controls">
+                <button id="radioPlay" class="emoji-btn">▶️</button>
+                <button id="radioStop" class="emoji-btn">⏹️</button>
+                <button id="radioMinimize" class="emoji-btn">🔽</button>
+            </div>
+        </div>
+        <div class="radio-input-group">
+            <input type="text" id="radioUrl" class="radio-input" placeholder="رابط يوتيوب...">
+            <button id="radioLoad" class="btn-primary" style="padding:2px 8px;font-size:0.8rem">تشغيل</button>
+        </div>
+        <div class="radio-visualizer">
+            <div class="bar" style="animation-delay:0s"></div>
+            <div class="bar" style="animation-delay:0.1s"></div>
+            <div class="bar" style="animation-delay:0.2s"></div>
+            <div class="bar" style="animation-delay:0.3s"></div>
+            <div class="bar" style="animation-delay:0.4s"></div>
+        </div>
+        <div id="youtubePlayer" style="display:none"></div>
+    </div>
+
+    <!-- Poll Modal -->
+    <div class="modal" id="pollModal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content glass">
+            <div class="modal-header">
+                <h3>تصويت جديد 📊</h3>
+                <button class="modal-close" id="closePollModal">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>نص السؤال</label>
+                <input type="text" id="pollQuestion" placeholder="مثال: هناكل فين النهاردة؟">
+            </div>
+            <div class="form-group">
+                <label>الخيارات (افصل بينهم بفاصلة , )</label>
+                <input type="text" id="pollOptions" placeholder="شاورما, بيتزا, كشري">
+            </div>
+            <button class="btn btn-primary btn-block" id="createPollBtn">إنشاء التصويت</button>
+        </div>
+    </div>
+
+    
+    <audio id="msgSound" src="https://assets.mixkit.co/active_storage/sfx/2346/2346-preview.mp3" preload="auto"></audio>
+    
+    
+
+<div class="toast" id="toast"><span class="toast-message"></span></div>
+<script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+
+</html>
+
+

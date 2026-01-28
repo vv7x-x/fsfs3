@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>فسفس | سبورة الشلة</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    
+    <style>
+        .graffiti-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .tools-panel {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px 20px;
+            border-radius: 50px;
+            display: flex;
+            gap: 15px;
+            border: 1px solid var(--accent-color);
+            z-index: 100;
+        }
+
+        .tool-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .tool-btn:hover,
+        .tool-btn.active {
+            transform: scale(1.2);
+            color: var(--accent-color);
+        }
+
+        .color-dot {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .color-dot.active {
+            border-color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-animation">
+        <div class="gradient-orb orb-1"></div>
+        <div class="gradient-orb orb-2"></div>
+    </div>
+
+    <nav class="navbar glass">
+        <div class="nav-container">
+            <a href="index.html" class="logo" style="text-decoration: none;">
+                <img src="fsfs.png" alt="fsfs">
+                <span class="logo-text">فسفس</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html" class="nav-link">الرئيسية</a></li>
+                <li><a href="chat.html" class="nav-link">الدردشة</a></li>
+                <li><a href="forum.html" class="nav-link">المنتدى</a></li>
+                <li><a href="reels.html" class="nav-link">الريلز</a></li>
+                <li><a href="graffiti.html" class="nav-link active">السبورة</a></li>
+            </ul>
+            <div class="nav-actions">
+                <a href="login.html" class="btn btn-ghost" style="text-decoration:none">تسجيل دخول</a>
+                <a href="register.html" class="btn btn-primary" style="text-decoration:none">انضم إلينا</a>
+            </div>
+            <button class="mobile-menu-btn" id="mobileMenuBtn"><span></span><span></span><span></span></button>
+        </div>
+    </nav>
+    <div class="mobile-menu" id="mobileMenu">
+        <ul class="mobile-nav-links">
+            <li><a href="index.html">الرئيسية</a></li>
+            <li><a href="chat.html">الدردشة</a></li>
+            <li><a href="forum.html">المنتدى</a></li>
+            <li><a href="reels.html">الريلز</a></li>
+            <li><a href="graffiti.html">السبورة</a></li>
+        </ul>
+    </div>
+
+    <main class="main-content">
+        <section class="section">
+            <div class="graffiti-container">
+                <h2 class="text-center" style="margin-bottom: 20px; color: #ffd700;">🎨 سبورة الشخبطة اللايف</h2>
+                <canvas id="graffitiCanvas" class="graffiti-board glass" width="1000" height="600"></canvas>
+
+                <div class="tools-panel">
+                    <button class="tool-btn active" id="pencilBtn">✏️</button>
+                    <button class="tool-btn" id="eraserBtn">🧹</button>
+                    <div class="color-dot active" style="background:#ef4444" data-color="#ef4444"></div>
+                    <div class="color-dot" style="background:#3b82f6" data-color="#3b82f6"></div>
+                    <div class="color-dot" style="background:#10b981" data-color="#10b981"></div>
+                    <div class="color-dot" style="background:#f59e0b" data-color="#f59e0b"></div>
+                    <div class="color-dot" style="background:#ffffff" data-color="#ffffff"></div>
+                    <button class="tool-btn" id="clearBtn">🗑️</button>
+                    <button class="tool-btn" id="saveBtn">💾</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    
+
+    <!-- Config & Global App -->
+    
+    
+
+    <script>
+        // Use global supabase from app.js if available, or fallback
+        const graffitiSupabase = window.supabase?.createClient ? window.supabase.createClient(SupabaseConfig.url, SupabaseConfig.key) : window.supabase;
+
+        const canvas = document.getElementById('graffitiCanvas');
+        const ctx = canvas.getContext('2d');
+        let isDrawing = false;
+        let lastX = 0;
+        let lastY = 0;
+        let color = '#ef4444';
+
+        // Resize
+        function resizeOptions() {
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+        }
+        window.addEventListener('resize', resizeOptions);
+        resizeOptions();
+
+        // Realtime - use separate channel to avoid app.js presence conflicts if any, 
+        // though they use different names ('graffiti-room' vs 'online-users')
+        const channel = graffitiSupabase.channel('graffiti-room');
+        channel.on('broadcast', { event: 'draw' }, ({ payload }) => {
+            drawRemote(payload);
+        }).on('broadcast', { event: 'clear' }, () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }).subscribe();
+
+        // Input
+        canvas.addEventListener('mousedown', startDraw);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDraw);
+        canvas.addEventListener('mouseout', stopDraw);
+
+        function startDraw(e) {
+            isDrawing = true;
+            [lastX, lastY] = [e.offsetX, e.offsetY];
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            const newX = e.offsetX;
+            const newY = e.offsetY;
+
+            drawLocal(lastX, lastY, newX, newY, color);
+
+            // Broadcast normalized coordinates
+            channel.send({
+                type: 'broadcast',
+                event: 'draw',
+                payload: {
+                    x1: lastX / canvas.width,
+                    y1: lastY / canvas.height,
+                    x2: newX / canvas.width,
+                    y2: newY / canvas.height,
+                    color: color
+                }
+            });
+
+            [lastX, lastY] = [newX, newY];
+        }
+
+        function stopDraw() { isDrawing = false; }
+
+        function drawLocal(x1, y1, x2, y2, c) {
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.strokeStyle = c;
+            ctx.lineWidth = 5;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+        }
+
+        function drawRemote(data) {
+            // Map back to local dimensions
+            drawLocal(
+                data.x1 * canvas.width,
+                data.y1 * canvas.height,
+                data.x2 * canvas.width,
+                data.y2 * canvas.height,
+                data.color
+            );
+        }
+
+        // Tools
+        document.querySelectorAll('.color-dot').forEach(dot => {
+            dot.addEventListener('click', () => {
+                color = dot.dataset.color;
+                document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
+                dot.classList.add('active');
+            });
+        });
+
+        document.getElementById('clearBtn').addEventListener('click', () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            channel.send({ type: 'broadcast', event: 'clear' });
+        });
+
+        document.getElementById('saveBtn').addEventListener('click', () => {
+            const link = document.createElement('a');
+            link.download = 'graffiti.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        });
+
+    </script>
+
+<div class="toast" id="toast"><span class="toast-message"></span></div>
+<script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+
+</html>
+
+

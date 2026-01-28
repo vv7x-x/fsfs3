@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>فسفس | لوحة الاختبار الشاملة</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .test-card {
+            padding: 20px;
+            border: 2px solid var(--primary-color);
+            border-radius: 15px;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-left: 10px;
+        }
+
+        .status-ok {
+            background: #4ade80;
+            box-shadow: 0 0 10px #4ade80;
+        }
+
+        .status-error {
+            background: #f87171;
+            box-shadow: 0 0 10px #f87171;
+        }
+
+        .log-box {
+            background: #000;
+            color: #0f0;
+            padding: 10px;
+            height: 150px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 0.8rem;
+            margin-top: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar glass">
+        <div class="nav-container">
+            <a href="index.html" class="logo">فسفس - اختبار النظام</a>
+            <div class="nav-actions">
+                <button onclick="location.reload()" class="btn btn-primary">إعادة فحص 🔄</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="test-grid">
+            <!-- API Status -->
+            <div class="test-card glass">
+                <h3>🌐 حالة الاتصال بالسيرفر (API)</h3>
+                <p id="apiStatus">جاري الفحص... <span class="status-indicator"></span></p>
+                <div id="apiLog" class="log-box"></div>
+            </div>
+
+            <!-- Socket Status -->
+            <div class="test-card glass">
+                <h3>🔌 حالة السوكيت (Socket.io)</h3>
+                <p id="socketStatus">جاري الفحص... <span class="status-indicator"></span></p>
+                <div id="socketLog" class="log-box"></div>
+            </div>
+
+            <!-- Auth Status -->
+            <div class="test-card glass">
+                <h3>🔐 حالة المستخدم (Auth)</h3>
+                <p id="authStatus">جاري الفحص... <span class="status-indicator"></span></p>
+                <div id="authLog" class="log-box"></div>
+            </div>
+
+            <!-- Feature Test -->
+            <div class="test-card glass">
+                <h3>🧪 اختبار الميزات</h3>
+                <div style="display:flex; gap:10px; flex-direction:column;">
+                    <button class="btn btn-outline" onclick="testChat()">إرسال رسالة تجريبية 💬</button>
+                    <button class="btn btn-outline" onclick="testBuzz()">إرسال اهتزاز (Buzz) ⚡</button>
+                    <button class="btn btn-outline" onclick="testRadio()">تشغيل راديو افتراضي 📻</button>
+                </div>
+            </div>
+        </div>
+
+        <div style="padding: 20px;">
+            <div class="test-card glass">
+                <h3>💬 معاينة الدردشة المباشرة (Live)</h3>
+                <div id="testMessages"
+                    style="height: 200px; overflow-y: auto; background: rgba(0,0,0,0.2); border-radius: 10px; padding: 10px; margin-bottom: 10px;">
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+    <script src="config.js"></script>
+    <script>
+        function log(id, msg, type = 'info') {
+            const box = document.getElementById(id);
+            const time = new Date().toLocaleTimeString();
+            box.innerHTML += `<div>[${time}] <span style="color:${type === 'error' ? '#f87171' : '#4ade80'}">${msg}</span></div>`;
+            box.scrollTop = box.scrollHeight;
+        }
+
+        async function runTests() {
+            if (!window.AppConfig) {
+                document.getElementById('apiStatus').innerHTML = `خطأ في الإعدادات ❌ <span class="status-indicator status-error"></span>`;
+                log('apiLog', 'ملف config.js لم يتم تحميله بشكل صحيح أو AppConfig غير معرف', 'error');
+                return;
+            }
+
+            const apiUrl = window.AppConfig.apiUrl;
+            const socketUrl = window.AppConfig.socketUrl;
+
+            // 1. API Test
+            try {
+                const start = Date.now();
+                const res = await fetch(`${apiUrl}/radio/state`);
+                const duration = Date.now() - start;
+                if (res.ok) {
+                    document.getElementById('apiStatus').innerHTML = `متصل ✅ (${duration}ms) <span class="status-indicator status-ok"></span>`;
+                    log('apiLog', 'تم الاتصال بالسيرفر بنجاح');
+                } else {
+                    throw new Error('Server returned ' + res.status);
+                }
+            } catch (e) {
+                document.getElementById('apiStatus').innerHTML = `خطأ في الاتصال ❌ <span class="status-indicator status-error"></span>`;
+                log('apiLog', e.message, 'error');
+            }
+
+            // 2. Auth Test
+            const token = localStorage.getItem('fsfs_token');
+            if (!token) {
+                document.getElementById('authStatus').innerHTML = `غير مسجل دخول ⚠️ <span class="status-indicator status-error"></span>`;
+                log('authLog', 'لم يتم العثور على توكن (fsfs_token) في المتصفح', 'error');
+            } else {
+                try {
+                    const res = await fetch(`${apiUrl}/auth/me`, {
+                        headers: { 'Authorization': token }
+                    });
+                    if (res.ok) {
+                        const user = await res.json();
+                        document.getElementById('authStatus').innerHTML = `مسجل دخول باسم: ${user.username} ✅ <span class="status-indicator status-ok"></span>`;
+                        log('authLog', 'التوكن صالح، المستخدم: ' + user.username);
+                        initSocketTest(token, socketUrl);
+                    } else {
+                        throw new Error('التوكن غير صالح أو منتهي');
+                    }
+                } catch (e) {
+                    document.getElementById('authStatus').innerHTML = `فشل التحقق ❌ <span class="status-indicator status-error"></span>`;
+                    log('authLog', e.message, 'error');
+                }
+            }
+        }
+
+        let socket;
+        function initSocketTest(token, socketUrl) {
+            socket = io(socketUrl, { auth: { token } });
+
+            socket.on('connect', () => {
+                document.getElementById('socketStatus').innerHTML = `متصل ✅ <span class="status-indicator status-ok"></span>`;
+                log('socketLog', 'تم فتح قناة Socket بنجاح ID: ' + socket.id);
+                socket.emit('join_chat');
+            });
+
+            socket.on('connect_error', (err) => {
+                document.getElementById('socketStatus').innerHTML = `خطأ سوكيت ❌ <span class="status-indicator status-error"></span>`;
+                log('socketLog', 'فشل السوكيت: ' + err.message, 'error');
+            });
+
+            socket.on('receive_message', (msg) => {
+                log('testMessages', `${msg.username}: ${msg.content}`);
+                const div = document.createElement('div');
+                div.style.padding = '5px';
+                div.innerHTML = `<strong>${msg.username}:</strong> ${msg.content}`;
+                document.getElementById('testMessages').appendChild(div);
+            });
+
+            socket.on('user_buzz', (data) => {
+                log('socketLog', `🚨 استلام اهتزاز من: ${data.username}`);
+                document.body.style.background = 'red';
+                setTimeout(() => document.body.style.background = '', 100);
+            });
+        }
+
+        function testChat() {
+            if (!socket) return alert('سجل دخول أولاً!');
+            socket.emit('send_message', { content: 'رسالة اختبار من صفحة الفحص 🧪' });
+            log('socketLog', 'تم إرسال رسالة اختبار');
+        }
+
+        function testBuzz() {
+            if (!socket) return alert('سجل دخول أولاً!');
+            socket.emit('send_buzz');
+            log('socketLog', 'تم إرسال اهتزاز');
+        }
+
+        function testRadio() {
+            if (!socket) return alert('سجل دخول أولاً!');
+            socket.emit('update_radio', { youtube_id: 'jfKfPfyJRdk' });
+            log('socketLog', 'تم إرسال أمر تحديث الراديو');
+        }
+
+        document.addEventListener('DOMContentLoaded', runTests);
+    </script>
+</body>
+
+</html>
